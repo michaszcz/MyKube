@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gd-intern-deployment
+  namespace: app-gd-intern
+spec:
+  selector:
+    matchLabels:
+      app: gd-intern
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: gd-intern
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:11.4
+        ports:
+        - containerPort: 5242
+        env: 
+        - name: POSTGRES_DB
+          value: 'rest'
+        - name: POSTGRES_USER
+          value: 'student'
+        - name: POSTGRES_PASSWORD
+          value: 'student'
+      - name: java
+        image: maven:3-jdk-8-slim
+        ports:
+        - containerPort: 8080
+        command:
+          - sh
+          - '-c'
+          - >-
+            apt-get update &&
+            apt-get install -y git &&
+            cd /home/ && 
+            git clone https://bitbucket.org/_lancer/gd-intenship.git &&
+            cd gd-intenship &&
+            mvn clean install -Dmaven.test.skip=true -pl '!data-generator' &&
+            java -jar forum-app/target/forum-app-0.2.jar
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: gd-intern
+  name: gd-intern-svc
+  namespace: app-gd-intern
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+  selector:
+    app: gd-intern

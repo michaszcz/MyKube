@@ -1,0 +1,14 @@
+---
+- hosts: local
+  gather_facts: no
+  tasks:
+  - name: Deploy app
+    k8s:
+      state: present
+      src: "deployments/APP/{{ item }}.yaml"
+    loop: 
+      - "namespace"
+      - "DeploymentConfig"
+      - "Ingress"
+  # - name: Wait for deployment
+  

@@ -1,0 +1,14 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: app-ingress
+  namespace: app-gd-intern
+spec:
+  rules:
+  - host: app.example-kube.cf
+    http:
+      paths:
+      - backend:
+          serviceName: gd-intern-svc
+          servicePort: 8080

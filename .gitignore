@@ -1,0 +1,5 @@
+.venv
+
+*.retry
+inv.yml
+.vscode
